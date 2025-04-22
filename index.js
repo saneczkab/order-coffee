@@ -23,7 +23,7 @@ addDrinkButton.addEventListener("click", () => {
     });
     const closeButton = newFieldset.querySelector(".close-button");
     closeButton.addEventListener("click", () => {
-        newFieldset.remove(); 
+        newFieldset.remove();
         updateRemoveButtons();
     });
     form.insertBefore(newFieldset, addDrinkButton.parentElement);
@@ -46,9 +46,36 @@ closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const beverage = button.closest("fieldset.beverage");
     beverage.remove();
-    updateRemoveButtons(); 
+    updateRemoveButtons();
   });
 });
 
 updateRemoveButtons();
 
+
+submitButton.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    const modalOverlay = document.createElement("div");
+    modalOverlay.className = "overlay";
+
+    const modal = document.createElement("div");
+    modal.className = "modal";
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "modal-close";
+    closeButton.textContent = "X";
+
+    const modalContent = document.createElement("div");
+    modalContent.textContent = "Заказ принят!";
+
+    modal.appendChild(closeButton);
+    modal.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
+    document.body.appendChild(modal);
+
+    closeButton.addEventListener("click", () => {
+        document.body.removeChild(modalOverlay);
+        document.body.removeChild(modal);
+    });
+});

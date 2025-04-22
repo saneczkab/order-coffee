@@ -19,6 +19,7 @@ addDrinkButton.addEventListener("click", () => {
 
     const checkboxInputs = newFieldset.querySelectorAll('input[type="checkbox"]');
     checkboxInputs.forEach(input => {
+        input.name = `options-${drinkNum}`;
         input.checked = false;
     });
 

@@ -1,24 +1,53 @@
 let drinkNum = 1;
+let formNum = 1
 
 const form = document.querySelector("form");
 const addDrinkButton = document.querySelector(".add-button");
 const submitButton = document.querySelector(".submit-button");
+
+const textarea = document.createElement("textarea");
+const fieldset = form.querySelector("fieldset.beverage");
+fieldset.appendChild(textarea);
+
+const textPreview = document.createElement("span");
+textPreview.style.marginLeft = "10px";
+fieldset.appendChild(textPreview);
+
+const triggerWords = ["срочно", "быстрее", "побыстрее", "скорее", "поскорее", "очень нужно"]
+function editTriggerWords(text) {
+    const result = text.split(" ").map(word => {
+        if (triggerWords.includes(word.toLowerCase())) {
+            return `<b>${word}</b>`;
+        }
+        return word;
+    }).join(" ");
+    return result;
+}
+
+textarea.addEventListener("input", (e) => {
+    const value = e.target.value;
+    textPreview.innerHTML = editTriggerWords(value);
+});
+
+
+
 addDrinkButton.addEventListener("click", () => {
     const lastFieldset = form.querySelector("fieldset.beverage");
     const newFieldset = lastFieldset.cloneNode(true);
 
     drinkNum++;
+    formNum++;
     newFieldset.querySelector(".beverage-count").textContent = "Напиток №" + drinkNum;
 
     const milkInputs = newFieldset.querySelectorAll('input[type="radio"]');
     milkInputs.forEach(input => {
-        input.name = `milk-${drinkNum}`;
+        input.name = `milk-${formNum}`;
         input.checked = false;
     });
 
     const checkboxInputs = newFieldset.querySelectorAll('input[type="checkbox"]');
     checkboxInputs.forEach(input => {
-        input.name = `options-${drinkNum}`;
+        input.name = `options-${formNum}`;
         input.checked = false;
     });
     const closeButton = newFieldset.querySelector(".close-button");
@@ -30,6 +59,16 @@ addDrinkButton.addEventListener("click", () => {
     });
     form.insertBefore(newFieldset, addDrinkButton.parentElement);
     updateRemoveButtons();
+
+    const newTextarea = newFieldset.querySelector("textarea");
+    const newTextPreview = newTextarea.nextElementSibling;
+
+    newTextarea.value = "";
+    newTextPreview.textContent = "";
+
+    newTextarea.addEventListener("input", (e) => {
+        newTextPreview.innerHTML = editTriggerWords(e.target.value);
+    });
 });
 
 

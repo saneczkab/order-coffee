@@ -23,8 +23,10 @@ addDrinkButton.addEventListener("click", () => {
     });
     const closeButton = newFieldset.querySelector(".close-button");
     closeButton.addEventListener("click", () => {
+        drinkNum--;
         newFieldset.remove();
         updateRemoveButtons();
+        updateDrinkNums();
     });
     form.insertBefore(newFieldset, addDrinkButton.parentElement);
     updateRemoveButtons();
@@ -41,17 +43,36 @@ function updateRemoveButtons() {
     });
   }
 
+  function updateDrinkNums() {
+    const beverages = document.querySelectorAll("fieldset.beverage");
+    beverages.forEach((beverage, index) => {
+      beverage.querySelector(".beverage-count").textContent = "Напиток №" + (index + 1);
+    });
+  }
+
 const closeButtons = document.querySelectorAll(".close-button");
 closeButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const beverage = button.closest("fieldset.beverage");
     beverage.remove();
+    drinkNum--;
     updateRemoveButtons();
+    updateDrinkNums();
   });
 });
 
 updateRemoveButtons();
+updateDrinkNums();
 
+function getWordByNum(num) {
+    const lastDigit = num % 10;
+    const lastTwoDigits = num % 100;
+
+    if (lastDigit === 1 && lastTwoDigits !== 11) {
+        return 'напиток';
+    }
+    return (lastTwoDigits < 11 || lastTwoDigits > 14) && lastDigit >= 2 && lastDigit <= 4 ? 'напитка' : 'напитков';
+}
 
 submitButton.addEventListener("click", (event) => {
     event.preventDefault();
@@ -67,7 +88,7 @@ submitButton.addEventListener("click", (event) => {
     closeButton.textContent = "X";
 
     const modalContent = document.createElement("div");
-    modalContent.textContent = "Заказ принят!";
+    modalContent.textContent = `Заказ принят! Вы заказали ${drinkNum} ${getWordByNum(drinkNum)}.`;
 
     modal.appendChild(closeButton);
     modal.appendChild(modalContent);

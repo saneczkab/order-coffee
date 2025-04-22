@@ -76,7 +76,18 @@ function getWordByNum(num) {
 
 submitButton.addEventListener("click", (event) => {
     event.preventDefault();
+    const beverages = Array.from(document.querySelectorAll("fieldset.beverage"));
+    const data = beverages.map(beverage => {
+        const drinkName = beverage.querySelector("select").selectedOptions[0].textContent;
+        const milkType = Array.from(beverage.querySelectorAll('input[type="radio"]'))
+            .find(radio => radio.checked)?.nextElementSibling.textContent.trim() || "не выбрано";
+        const options = Array.from(beverage.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.nextElementSibling.textContent.trim())
+            .join(", ") || "";
 
+        return { drinkName, milkType, options };
+    });
+    const headers = ["Напиток", "Молоко", "Дополнительно"]
     const modalOverlay = document.createElement("div");
     modalOverlay.className = "overlay";
 
@@ -86,12 +97,40 @@ submitButton.addEventListener("click", (event) => {
     const closeButton = document.createElement("button");
     closeButton.className = "modal-close";
     closeButton.textContent = "X";
+    const table = document.createElement("table");
+    table.setAttribute('border', '1')
+
+    const headerRow = document.createElement("tr");
+    headers.forEach(headerText => {
+        const th = document.createElement("th");
+        th.textContent = headerText;
+        headerRow.appendChild(th);
+    });
+    table.appendChild(headerRow);
+    data.forEach(({ drinkName, milkType, options }) => {
+        const row = document.createElement("tr");
+
+        const drinkCell = document.createElement("td");
+        drinkCell.textContent = drinkName;
+        row.appendChild(drinkCell);
+
+        const milkCell = document.createElement("td");
+        milkCell.textContent = milkType;
+        row.appendChild(milkCell);
+
+        const optionsCell = document.createElement("td");
+        optionsCell.textContent = options;
+        row.appendChild(optionsCell);
+
+        table.appendChild(row);
+    });
 
     const modalContent = document.createElement("div");
     modalContent.textContent = `Заказ принят! Вы заказали ${drinkNum} ${getWordByNum(drinkNum)}.`;
 
     modal.appendChild(closeButton);
     modal.appendChild(modalContent);
+    modal.appendChild(table)
     document.body.appendChild(modalOverlay);
     document.body.appendChild(modal);
 
